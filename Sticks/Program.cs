@@ -33,149 +33,143 @@ namespace Sticks
         static void Main(string[] args)
         {
             gameLoop();
-            Console.ReadKey();
+        }
+
+        static int promptForInt(string message, int min, int max)
+        {
+            string response = "";
+            int parsed = 0;
+            do
+            {
+                Console.WriteLine(message + " (" + min + "-" + max + ")");
+                response = Console.ReadLine();
+            } while (!int.TryParse(response, out parsed) || parsed < min || parsed > max);
+
+            return parsed;
+        }
+
+        static bool promptForYesOrNo(string message)
+        {
+            string response = "";
+            do
+            {
+                Console.WriteLine(message + " (y/n)");
+                response = Console.ReadLine();
+            } while (response.Length != 1 || !"yn".Contains(response));
+
+            return response.Equals("y");
+        }
+
+        static int[] buildBoard(int rows)
+        {
+            int[] board = new int[rows];
+            for (int i = 0; i < rows; i++)
+            {
+                board[i] = (2 * i + 1);
+            }
+
+            return board;
+        }
+
+        static void printBoard(int[] board)
+        {
+            for (int i = 0; i < board.Length; i++)
+            {
+                int stickCount = board[i];
+                Console.Write(i + "  ");
+                for (int j = 0; j < ((2 * board.Length - 1 - stickCount) + 1) / 2; j++)
+                {
+                    Console.Write(" ");
+                }
+
+                for (int j = 0; j < stickCount; j++)
+                {
+                    Console.Write("|");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        static int getLineToRemoveFrom(int[] board)
+        {
+            int row = promptForInt("Please enter row for sticks to be removed.", 0, board.Length - 1);
+            while (board[row] < 1)
+            {
+                row = promptForInt("Please pick a row with sticks in it.", 0, board.Length - 1);
+            }
+
+            return row;
+        }
+
+        static int checkWinner(int sumSticks, int turn)
+        {
+            if (sumSticks <= 1)
+            {
+                return ((turn + sumSticks) % 2) + 1;
+            }
+
+            return 0;
         }
 
         static void gameLoop()
         {
-            bool AI;
-            Console.WriteLine("Play multiplayer? (y/n)");
-            if (Console.ReadLine().Equals("y"))
+            do
             {
-                AI = false;
-            }
+                Console.Clear();
+                bool multiplayer = promptForYesOrNo("Play multiplayer?");
 
-            else
-            {
-                AI = true;
-            }            
-            
-            Console.WriteLine("Please enter number of rows for sticks.");
-            int rows = int.Parse(Console.ReadLine());
-            int[] numberArray = new int[rows];
-            for (int i = 0; i < rows; i++)
-            {
-                numberArray[i] = (2 * i + 1);
-            }
-            int turn = 0;
-            int sumSticks = 0;
+                int rows = promptForInt("Please enter number of rows for sticks.", 2, 9);
+                int[] numberArray = buildBoard(rows);
 
-            for (int j = 0; j < numberArray.Length; j++)
-            {
-                sumSticks += numberArray[j];
-            }
+                int turn = 0;
+                int sumSticks = numberArray.Sum();
+                int winner = 0;
 
-            while (true)
-            {
-                for (int i = 0; i < rows; i++)
+                while ((winner = checkWinner(sumSticks, turn)) == 0)
                 {
-                    int stickCount = numberArray[i];
-                    Console.Write(i + "  ");
-                    for (int j = 0; j < ((2 * rows - 1 - stickCount) + 1) / 2; j++)
-                    {
-                        Console.Write(" ");
-                    }
+                    Console.Clear();
+                    printBoard(numberArray);
 
-                    for (int j = 0; j < stickCount; j++)
+                    if (multiplayer || turn % 2 == 0)
                     {
-                        Console.Write("|");
-                    }
-                    Console.WriteLine();
-                }
-
-                if (sumSticks <= 1)
-                {
-                    if (sumSticks == 1)
-                    {
-                        if (((turn % 2) + 1) == 2)
+                        if (multiplayer)
                         {
-                            Console.WriteLine("Game over, you win!");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Game over, AI wins!");
-                        }
-                        break;
-                    }
-                    else if (sumSticks == 0)
-                    {
-                        if ((((turn + 1) % 2) + 1) == 2)
-                        {
-                            Console.WriteLine("Game over, you win!");
-                        }
-                        else
-                        {
-                            Console.WriteLine("Game over, AI wins!");
-                        }
-                        break;
-                    }
-
-                }
-
-                if (AI)
-                {
-                    if (turn % 2 == 0)
-                    {
-                        Console.WriteLine("Please enter row for sticks to be removed");
-                        int changeRow = int.Parse(Console.ReadLine());
-                        Console.WriteLine("Please enter number of sticks to be removed");
-
-                        int num = int.Parse(Console.ReadLine());
-                        if (num > numberArray[changeRow])
-                        {
-                            Console.WriteLine("Fuck u u r pacfici tard");
-                            continue;
+                            Console.WriteLine("Player {0}'s turn.", (turn % 2) + 1);
                         }
 
+                        int changeRow = getLineToRemoveFrom(numberArray);
+                        int num = promptForInt("Please enter number of sticks to be removed.", 1, numberArray[changeRow]);
 
-                        else
-                        {
-                            numberArray[changeRow] -= num;
-                            sumSticks -= num;
-                        }
-
-                        turn++;
-                        Console.Clear();
-                    }
-
-                    else 
-                    {
-                        int[] numTards = new int[numberArray.Length]; 
-                        Array.Copy(numberArray, numTards,numberArray.Length);
-                        int sumTards = sumSticks;
-                        
-                        winlose AiResponse = SmartAi(numTards, sumTards);
-                        numberArray[AiResponse.wins] -= AiResponse.losses;
-                        sumSticks -= AiResponse.losses;
-                        turn++;
-                        Console.Clear();
-                    }
-                }
-
-                else 
-                {
-                    Console.WriteLine("Player {0}'s turn\nPlease enter row for sticks to be removed", turn%2 + 1);
-                    int changeRow = int.Parse(Console.ReadLine());
-                    Console.WriteLine("Please enter number of sticks to be removed");
-
-                    int num = int.Parse(Console.ReadLine());
-                    if (num > numberArray[changeRow])
-                    {
-                        Console.WriteLine("Fuck u u r pacfici tard");
-                        continue;
-                    }
-
-
-                    else
-                    {
                         numberArray[changeRow] -= num;
                         sumSticks -= num;
                     }
+                    else
+                    {
+                        winlose AiResponse = SmartAi(numberArray, sumSticks);
+                        numberArray[AiResponse.wins] -= AiResponse.losses;
+                        sumSticks -= AiResponse.losses;
+                    }
 
                     turn++;
-                    Console.Clear();
                 }
-            }
+
+                Console.Clear();
+                printBoard(numberArray);
+
+                string winnerText = "";
+
+                if (multiplayer)
+                {
+                    winnerText = "Player " + winner;
+                }
+                else
+                {
+                    winnerText = winner == 1 ? "Player" : "AI";
+                }
+
+                Console.WriteLine("Game Over! {0} wins!", winnerText);
+
+            } while (promptForYesOrNo("Play again?"));
         }
 
         static winlose SmartAi(int[] numberArray, int sum)
