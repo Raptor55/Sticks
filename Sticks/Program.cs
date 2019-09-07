@@ -6,15 +6,15 @@ using System.Threading.Tasks;
 
 namespace Sticks
 {
-    struct winlose
+    struct Move
     {
-        public winlose(int a, int b)
+        public Move(int row, int number)
         {
-            wins = a;
-            losses = b;
+            this.row = row;
+            this.number = number;
         }
-        public int wins;
-        public int losses;
+        public int row;
+        public int number;
     }
 
     struct symmetry
@@ -145,9 +145,9 @@ namespace Sticks
                     }
                     else
                     {
-                        winlose AiResponse = SmartAi(numberArray, sumSticks);
-                        numberArray[AiResponse.wins] -= AiResponse.losses;
-                        sumSticks -= AiResponse.losses;
+                        Move AiResponse = SmartAi(numberArray, sumSticks);
+                        numberArray[AiResponse.row] -= AiResponse.number;
+                        sumSticks -= AiResponse.number;
                     }
 
                     turn++;
@@ -172,7 +172,7 @@ namespace Sticks
             } while (promptForYesOrNo("Play again?"));
         }
 
-        static winlose SmartAi(int[] numberArray, int sum)
+        static Move SmartAi(int[] numberArray, int sum)
         {
             int numRows = numberRows(numberArray);
             int num = 0;
@@ -207,22 +207,22 @@ namespace Sticks
                 {
                     if (numberArray[i] > 0)
                     {
-                        return new winlose(i, numberArray[i]);
+                        return new Move(i, numberArray[i]);
                     }
                 }
-                    return new winlose(row, numberArray[row]);
+                    return new Move(row, numberArray[row]);
             }
             
             if (num == numRows - 1)
             {
                 if ((numRows) % 2 == 0)
                 {
-                    return new winlose(row, numberArray[row]);
+                    return new Move(row, numberArray[row]);
                 }
 
                 else 
                 {
-                    return new winlose(row, numberArray[row] - 1);
+                    return new Move(row, numberArray[row] - 1);
                 }
             }
 
@@ -285,12 +285,12 @@ namespace Sticks
                 {
                     if (numberArray[firstfucked] > numberArray[secondfucked])
                     {
-                        return new winlose(firstfucked, numberArray[firstfucked]-numberArray[secondfucked]);
+                        return new Move(firstfucked, numberArray[firstfucked]-numberArray[secondfucked]);
                     }
                     
                     else
                     {
-                        return new winlose(secondfucked, numberArray[secondfucked] - numberArray[firstfucked]);
+                        return new Move(secondfucked, numberArray[secondfucked] - numberArray[firstfucked]);
                     }
                 }
             }
@@ -338,7 +338,7 @@ namespace Sticks
                 
                 if (count == 1)
                 {
-                    return new winlose(firstfucked, numberArray[firstfucked]);
+                    return new Move(firstfucked, numberArray[firstfucked]);
                 }
             }
 
@@ -372,14 +372,14 @@ namespace Sticks
                         {
                             if ((numberArray[indexes[2]] - numberArray[indexes[1]]) > gcd)
                             {
-                                return new winlose (indexes[2], (numberArray[indexes[2]] - (numberArray[indexes[1]] - gcd)));
+                                return new Move(indexes[2], (numberArray[indexes[2]] - (numberArray[indexes[1]] - gcd)));
                             }
                         }
                         else
                         {
                             if (numberArray[indexes[2]] > (numberArray[indexes[0]]-gcd))
                             {
-                                return new winlose (indexes[2], numberArray[indexes[2]]-(numberArray[indexes[0]]-gcd));
+                                return new Move(indexes[2], numberArray[indexes[2]]-(numberArray[indexes[0]]-gcd));
                             }
                         }
                     }
@@ -392,14 +392,14 @@ namespace Sticks
                         {
                             if ((numberArray[indexes[0]] - numberArray[indexes[2]]) > gcd)
                             {
-                                return new winlose (indexes[0], (numberArray[indexes[0]] - (numberArray[indexes[2]] - gcd)));
+                                return new Move(indexes[0], (numberArray[indexes[0]] - (numberArray[indexes[2]] - gcd)));
                             }
                         }
                         else
                         {
                             if (numberArray[indexes[0]] > (numberArray[indexes[1]]-gcd))
                             {
-                                return new winlose (indexes[0], numberArray[indexes[0]]-(numberArray[indexes[1]]-gcd));
+                                return new Move(indexes[0], numberArray[indexes[0]]-(numberArray[indexes[1]]-gcd));
                             }
                         }
                     }
@@ -412,14 +412,14 @@ namespace Sticks
                         {
                             if ((numberArray[indexes[1]] - numberArray[indexes[0]]) > gcd)
                             {
-                                return new winlose (indexes[1], (numberArray[indexes[1]] - (numberArray[indexes[0]] - gcd)));
+                                return new Move(indexes[1], (numberArray[indexes[1]] - (numberArray[indexes[0]] - gcd)));
                             }
                         }
                         else
                         {
                             if (numberArray[indexes[1]] > (numberArray[indexes[2]]-gcd))
                             {
-                                return new winlose (indexes[1], numberArray[indexes[1]]-(numberArray[indexes[2]]-gcd));
+                                return new Move(indexes[1], numberArray[indexes[1]]-(numberArray[indexes[2]]-gcd));
                             }
                         }
                     }
@@ -434,7 +434,7 @@ namespace Sticks
                         {
                             if ((numberArray[indexes[2]] - numberArray[indexes[0]]) >= gcd)
                             {
-                                return new winlose(indexes[2], (numberArray[indexes[2]] - numberArray[indexes[0]] - gcd));
+                                return new Move(indexes[2], (numberArray[indexes[2]] - numberArray[indexes[0]] - gcd));
                             }
                         }
                     }
@@ -447,7 +447,7 @@ namespace Sticks
                         {
                             if ((numberArray[indexes[0]] - numberArray[indexes[2]]) >= gcd)
                             {
-                                return new winlose(indexes[0], (numberArray[indexes[0]] - numberArray[indexes[2]] - gcd));
+                                return new Move(indexes[0], (numberArray[indexes[0]] - numberArray[indexes[2]] - gcd));
                             }
                         }
                     }
@@ -460,7 +460,7 @@ namespace Sticks
                         {
                             if ((numberArray[indexes[1]] - numberArray[indexes[0]]) >= gcd)
                             {
-                                return new winlose(indexes[1], (numberArray[indexes[1]] - numberArray[indexes[0]] - gcd));
+                                return new Move(indexes[1], (numberArray[indexes[1]] - numberArray[indexes[0]] - gcd));
                             }
                         }
                     }
@@ -491,7 +491,7 @@ namespace Sticks
                             Array.Sort(temp);
                             if (temp[2] - temp[0] == 2 && temp[1] - temp[0] == 1)
                             {
-                                return new winlose(indexes[i], numberArray[indexes[i]]);
+                                return new Move(indexes[i], numberArray[indexes[i]]);
                             }
                         }
                         else if (i == 1)
@@ -502,7 +502,7 @@ namespace Sticks
                             Array.Sort(temp);
                             if (temp[2] - temp[0] == 2 && temp[1] - temp[0] == 1)
                             {
-                                return new winlose(indexes[i], numberArray[indexes[i]]);
+                                return new Move(indexes[i], numberArray[indexes[i]]);
                             }
                         }
                         else if (i == 2)
@@ -513,7 +513,7 @@ namespace Sticks
                             Array.Sort(temp);
                             if (temp[2] - temp[0] == 2 && temp[1] - temp[0] == 1)
                             {
-                                return new winlose(indexes[i], numberArray[indexes[i]]);
+                                return new Move(indexes[i], numberArray[indexes[i]]);
                             }
                         }
                         else
@@ -524,7 +524,7 @@ namespace Sticks
                             Array.Sort(temp);
                             if (temp[2] - temp[0] == 2 && temp[1] - temp[0] == 1)
                             {
-                                return new winlose(indexes[i], numberArray[indexes[i]]);
+                                return new Move(indexes[i], numberArray[indexes[i]]);
                             }
                         }
 
@@ -578,11 +578,11 @@ namespace Sticks
 
                 if (sumSticks % 2 == 0)
                 {
-                    return new winlose(bestI, 2);
+                    return new Move(bestI, 2);
                 }
                 else
                 {
-                    return new winlose(bestI, 1);
+                    return new Move(bestI, 1);
                 }
             }
         }
