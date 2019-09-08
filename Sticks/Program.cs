@@ -180,7 +180,10 @@ namespace Sticks
                 {
                     tempBoard[rankedIndices[j]] -= i;
 
-                    if (OrAll(tempBoard) == 1 || XOrAll(tempBoard) == 0)
+                    int OrAllResult = OrAll(tempBoard);
+                    int XOrAllResult = XOrAll(tempBoard);
+
+                    if ((OrAllResult == 1 && XOrAllResult != 0) || (OrAllResult != 1 && XOrAllResult == 0))
                     {
                         return new Move(rankedIndices[j], i);
                     }
