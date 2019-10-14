@@ -1,17 +1,18 @@
-﻿using System;
+using System;
 using System.Linq;
 
 namespace Sticks
 {
     struct Move
     {
+        public int row;
+        public int number;
+        
         public Move(int row, int number)
         {
             this.row = row;
             this.number = number;
         }
-        public int row;
-        public int number;
     }
 
     class Program
