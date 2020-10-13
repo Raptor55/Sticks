@@ -154,7 +154,7 @@ namespace Sticks
                     winnerText = winner == 1 ? "Player" : "AI";
                 }
 
-                Console.WriteLine("Game Over! {0} wins!", winnerText);
+                Console.WriteLine("Game Over! {0} wins! Congratulations on such an incredible achievement!", winnerText);
 
             } while (PromptForYesOrNo("Play again?"));
         }
